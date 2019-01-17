@@ -15,7 +15,7 @@ import com.brx.viewpager.ui.main.content.SecondFragment
 import com.brx.viewpager.ui.main.content.TabContent
 import kotlinx.android.synthetic.main.main_fragment.*
 
-class MainFragment : Fragment(), FirstFragment.FirstFragmentListener {
+class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
@@ -39,6 +39,10 @@ class MainFragment : Fragment(), FirstFragment.FirstFragmentListener {
 
         adapter = setupAdapter()
         viewPager.adapter = adapter
+        viewPager.post {
+            firstLoad = true
+            viewModel.init()
+        }
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
@@ -47,11 +51,6 @@ class MainFragment : Fragment(), FirstFragment.FirstFragmentListener {
         })
 
         setupListeners()
-    }
-
-    override fun firstLoad() {
-        firstLoad = true
-        viewModel.init()
     }
 
     private fun setupTabLayout(viewPager: ViewPager) {
@@ -69,7 +68,6 @@ class MainFragment : Fragment(), FirstFragment.FirstFragmentListener {
     private fun setupAdapter(): SectionPageAdapter {
         val adapter = SectionPageAdapter(fragmentManager)
         val firstFragment = FirstFragment()
-        firstFragment.setListener(this)
         adapter.addFragment(firstFragment)
         adapter.addFragment(SecondFragment())
         return adapter
